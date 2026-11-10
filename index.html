@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Call PopPop</title>
+
+<!-- Behave like an app when added to the Home Screen -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Call PopPop">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#dff4e5">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(180deg, #e8f7ee 0%, #cdeeda 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100dvh;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(14px, env(safe-area-inset-bottom));
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    overflow: hidden;
+  }
+
+  /* The one big button — nearly the whole screen is the tap target */
+  #callBtn {
+    flex: 1;
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 32px;
+  }
+  #callBtn:active .photoRing { transform: scale(0.97); }
+  .photoRing {
+    width: min(62vw, 300px);
+    height: min(62vw, 300px);
+    border-radius: 50%;
+    background: #ffffff;
+    padding: 10px;
+    box-shadow: 0 10px 30px rgba(27, 120, 64, 0.28);
+    transition: transform 0.08s ease;
+  }
+  .photoRing img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+  }
+  .callWords {
+    background: #2e9e5b;
+    color: #ffffff;
+    font-size: clamp(40px, 11vw, 56px);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 18px 40px;
+    border-radius: 999px;
+    box-shadow: 0 8px 22px rgba(27, 120, 64, 0.35);
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  /* Friendly note shown only when PopPop's FaceTime address is not set up yet */
+  #notReady {
+    display: none;
+    max-width: 520px;
+    background: #ffffff;
+    border: 3px solid #2e9e5b;
+    border-radius: 20px;
+    color: #1b7840;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+  }
+
+  footer {
+    color: #4a7a5c;
+    font-size: 12.5px;
+    line-height: 1.45;
+    text-align: center;
+    max-width: 520px;
+    padding-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<a id="callBtn" href="#" aria-label="Call PopPop">
+  <span class="photoRing"><img src="poppop.jpg" alt="PopPop"></span>
+  <span class="callWords">Call PopPop 💚</span>
+</a>
+
+<div id="notReady">PopPop's number isn't set up yet 💚<br>A grown-up needs to finish setting this up first.</div>
+
+<footer>Grown-ups: add this page to the Home Screen (Share → Add to Home Screen), then turn on Guided Access in Settings → Accessibility to lock the call.</footer>
+
+<script>
+/* ============================================================
+   CONFIG — BEACON: fill in PopPop's FaceTime target here.
+   ------------------------------------------------------------
+   FACETIME_TARGET = the Apple ID email OR the mobile number
+   that reaches Mary (PopPop) on FaceTime. Mary's choice.
+   Leave it as "" (empty) until she confirms which one to use.
+   NEVER guess an address — a wrong guess rings a wrong person.
+   One edit here is all it takes; nothing else in the file
+   needs to change.
+   ============================================================ */
+const FACETIME_TARGET = "+17314156008";
+
+/* Pure helper (kept separate so it can be tested on its own):
+   empty target -> null (do not dial); set target -> facetime:// link */
+function buildFacetimeURL(target) {
+  const t = (target || "").trim();
+  if (!t) return null;
+  return "facetime://" + encodeURIComponent(t);
+}
+</script>
+
+<script>
+(function () {
+  var btn = document.getElementById("callBtn");
+  var note = document.getElementById("notReady");
+  var url = buildFacetimeURL(FACETIME_TARGET);
+  if (url) {
+    btn.setAttribute("href", url);
+  } else {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      note.style.display = "block";
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
